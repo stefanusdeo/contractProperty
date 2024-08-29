@@ -8,12 +8,10 @@ contract OwnerPropertyTokenTest is Test {
     OwnerPropertyToken public tokenContract;
 
     function setUp() public {
-        // Deploy contract before each test
         tokenContract = new OwnerPropertyToken();
     }
 
     function testRegisterProperty() public {
-        // Test for successful property registration
         OwnerPropertyToken.RegisterPropertyParams memory params = OwnerPropertyToken.RegisterPropertyParams({
             urlPhoto: "https://example.com/photo.jpg",
             locationAddress: "123 Blockchain St.",
@@ -27,13 +25,12 @@ contract OwnerPropertyTokenTest is Test {
             subdistrict: "Central District"
         });
 
-        vm.prank(address(1)); // simulate transaction from address(1)
+        vm.prank(address(1)); 
         tokenContract.registerProperty(params);
 
-        // Validate the tokenId increment and property stored
+
         uint256 tokenId = tokenContract.nextTokenId() - 1;
 
-        // Fetch each property field separately
         (string memory urlPhoto, 
         string memory locationAddress, 
         uint32 buildingArea, 
@@ -56,12 +53,10 @@ contract OwnerPropertyTokenTest is Test {
         assertEq(sertificateNumber, "CERT123456");
         assertEq(subdistrict, "Central District");
 
-        // Validate ownership
         assertEq(tokenContract.ownerOf(tokenId), address(1));
     }
 
     function testRegisterMultipleProperties() public {
-        // Test for registering multiple properties and validate uniqueness of token IDs
         OwnerPropertyToken.RegisterPropertyParams memory params1 = OwnerPropertyToken.RegisterPropertyParams({
             urlPhoto: "https://example.com/photo1.jpg",
             locationAddress: "123 Blockchain St.",
@@ -88,17 +83,15 @@ contract OwnerPropertyTokenTest is Test {
             subdistrict: "Decentral District"
         });
 
-        vm.prank(address(1)); // simulate transaction from address(1)
+        vm.prank(address(1));
         tokenContract.registerProperty(params1);
 
-        vm.prank(address(2)); // simulate transaction from address(2)
+        vm.prank(address(2));
         tokenContract.registerProperty(params2);
 
-        // Validate properties and ownership
         uint256 tokenId1 = 0;
         uint256 tokenId2 = 1;
 
-        // Fetch each property field separately
         (string memory urlPhoto1, 
         string memory locationAddress1, 
         uint32 buildingArea1, 
@@ -131,7 +124,6 @@ contract OwnerPropertyTokenTest is Test {
     }
 
     function testFailIfNotOwnerTriesToRegister() public {
-        // Test for failure when a non-owner tries to register a property
         OwnerPropertyToken.RegisterPropertyParams memory params = OwnerPropertyToken.RegisterPropertyParams({
             urlPhoto: "https://example.com/photo.jpg",
             locationAddress: "123 Blockchain St.",
@@ -145,12 +137,11 @@ contract OwnerPropertyTokenTest is Test {
             subdistrict: "Central District"
         });
 
-        vm.expectRevert("Ownable: caller is not the owner"); // expect revert from Ownable
+        vm.expectRevert("Ownable: caller is not the owner"); 
         tokenContract.registerProperty(params);
     }
 
     function testPropertyRegisteredEvent() public {
-        // Test that the PropertyRegistered event is emitted correctly
         OwnerPropertyToken.RegisterPropertyParams memory params = OwnerPropertyToken.RegisterPropertyParams({
             urlPhoto: "https://example.com/photo.jpg",
             locationAddress: "123 Blockchain St.",
@@ -164,10 +155,10 @@ contract OwnerPropertyTokenTest is Test {
             subdistrict: "Central District"
         });
 
-        vm.prank(address(1)); // simulate transaction from address(1)
+        vm.prank(address(1)); 
 
         vm.expectEmit(true, true, true, true);
-        emit OwnerPropertyToken.PropertyRegistered(0, address(1)); // Refer to the contract's event
+        emit OwnerPropertyToken.PropertyRegistered(0, address(1));
 
         tokenContract.registerProperty(params);
     }
